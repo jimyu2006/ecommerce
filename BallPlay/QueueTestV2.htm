@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #foo
+        {
+            margin: 3px;
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 0px;
+            top: 60px;
+            background: green;
+        }
+        
+        #bar
+        {
+            margin: 3px;
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 0px;
+            top: 200px;
+            background: red;
+        }
+        
+        div.newcolor
+        {
+            background: blue;
+        }
+        p
+        {
+            color: red;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.9.1.js">    </script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#btnTest").click(function () {
+                    $("#foo").animate({ left: "+=40" }, 2000, function(){
+                        $(this).fadeOut(2000);
+                    });
+                  
+                    $("#bar").fadeOut(2000);
+//                    $("#bar").queue(function (next) {
+//                        next();
+//                        //$(this).fadeOut(2000);
+//                    });
+                });
+            });
+
+            function next(){
+            alert("Start next!");
+            }
+
+    </script>
+</head>
+<body>
+<input type=button id="btnTest" value="TEST"/>
+<div id="foo"></div>
+<div id="bar"></div>
+</body>
+</html>

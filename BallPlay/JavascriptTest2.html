@@ -1,0 +1,272 @@
+﻿<html>
+<head>
+    <title ></title>
+    <script type ="text/javascript" src ="jquery-1.9.1.min.js"></script>
+    <script type ="text/javascript" src ="path.js"></script>
+    <script type ="text/javascript">
+        $(document).ready( function () {
+            var array = [
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1]
+            ];
+
+            var rp = new RoutePlanner();
+            var nodeList = rp.InitPaths(array);
+
+            var id = 0;
+            var leftCorner;
+            var topCorner;
+            var radius = 50;
+            var ballselected = false;
+			
+			var startRow=0, startCol=0;
+
+            Element.prototype.move = function (path, i) {
+                if ($( this).hasClass( "ball")) {
+                    var self = this;
+                    ballselected = false;
+                    $( this).removeClass( "selected");
+                    if (i < path.passedNodeIDs.length) {
+                        var pos = path.passedNodeIDs[i];
+                        var row = pos.toString().substring(0, 1);
+                        var col = pos.toString().substring(1, 2);
+                        $(self).animate({ top: topCorner + row * radius, left: leftCorner + col * radius }, 500,
+                            function () {
+                            this.move(path, i + 1);
+                        });
+                    }
+                }
+            }
+
+            if (!$( "#basediv div").length) {
+                for ( var i = 0; i < 100; i++) {
+                    $( "#basediv").append("<div class=\"box\" ></div>" );
+                }
+                leftCorner = $( "#basediv").position().left;
+                topCorner = $( "#basediv").position().top;
+            }
+
+            $( this).click( function (e) {
+
+                if ($(e.target).is( "div")) {
+                    if ($(e.target).hasClass( "ball")) {
+                        //$(e.target).addClass("selected").css({ "background": "-webkit-radial-gradient(50% 50%, closest-corner, #F42626, #2F2727)" });
+						var index = $(e.target).index();
+                        startRow = Math.floor(index / 10);
+                        startCol = index % 10;
+						
+                        $(e.target).addClass( "selected");
+                        ballselected = true;
+                    }
+                    else {
+                        var index = $(e.target).index();
+                        var row = Math.floor(index / 10);
+                        var col = index % 10;
+
+                        var path = rp.Plan(nodeList, "22", row.toString()+col.toString() );
+
+                        if (ballselected) {
+                            var selectedBall = $( this).find( ".selected");
+                            if (selectedBall) {
+                                selectedBall[0].move(path, 0);
+                            }
+                            else {
+                                ballselected = false;
+                            }
+                        }
+                        else {
+                            id++;
+                            ballselected = false;
+                            //var newball = "<div class='ball' id='ball_" + id + "'></div>"
+                            var newball = new Ball(id, "green");
+							array[row * 8 +col]=0;
+                            //$("#basediv").append(newball);
+                            $( "#basediv").append(newball.theString());
+                            $( "#ball_" + id).css({ "top" : topCorner + row * radius, "left": leftCorner + col * radius });
+                        }
+                    }
+                }
+
+            });
+
+
+
+            function Ball(id, type       ) {
+                var newball = "<div class='ball " + type + "' id='ball_" + id + "' ></div>";
+                this.id = id;
+                this.eleString = newball;
+
+                function move() {
+                    alert( "I am moving!");
+                }
+                function theString() {
+                    return newball;
+                }
+                function toString() {
+                    return newball;
+                }
+
+                //this.move = function (row, col) {
+                //    alert("TEST");
+                //    //$(this).animate({ "top": row * radius, "left": col * radius }, 3000, function () {
+                //    //    ballselected = false;
+                //    //    $(this).removeClass("selected");
+                //    //});
+                //}
+            }
+
+            Ball.prototype = {
+                theString: function () {
+                    return this.eleString;
+                },
+                move: function () {
+                    alert( "I am moving!");
+                }
+            }
+        });
+    </script >
+    <style >
+        #balldiv
+        {
+            width: 500px;
+            height: 500px;
+            z-index: 1;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            border: 1px solid blue;
+        }
+
+        #basediv
+        {
+            width: 500px;
+            height: 500px;
+        }
+
+        .box
+        {
+            width: 49px;
+            height: 49px;
+            border-left: 1px solid black ;
+            border-top: 1px solid black ;
+            float: left;
+        }
+
+        div.ball
+        {
+            width: 49px;
+            height: 49px;
+            /*background-color: red;*/
+            -webkit-border-radius: 25px ;
+            -moz-border-radius: 25px ;
+            border-radius: 25px ;
+            -khtml-border-radius: 25px ;
+            position: absolute;
+            z-index: 2;
+            /*gradient style to make it a blend of red to dark red */
+            -moz-box-shadow: 2px 2px 5px #000 ;
+            -webkit-box-shadow: 2px 2px 10px #000 ;
+            box-shadow: 2px 2px 10px #000 ;
+            /*background-image: linear-gradient(left bottom, #5C0000 46%, #B00000 70%, #FF0000 100%);
+            background-image: -o-linear-gradient(left bottom, #5C0000 46%, #B00000 70%, #FF0000 100%);
+            background-image: -moz-linear-gradient(left bottom, #5C0000 46%, #B00000 70%, #FF0000 100%);
+            background-image: -webkit-linear-gradient(left bottom, #5C0000 46%, #B00000 70%, #FF0000 100%);
+            background-image: -ms-linear-gradient(left bottom, #5C0000 46%, #B00000 70%, #FF0000 100%);*/
+            /*background-image: -webkit-gradient(
+                   linear,
+                   left bottom,
+                   right top,
+                   color-stop(0.46, #5C0000),
+                   color-stop(0.7, #B00000),
+                   color-stop(1, #FF0000)
+            );*/
+        }
+
+        .red
+        {
+            background: -webkit-radial-gradient(50% 50%, closest-corner, #F42626, #2F2727);
+        }
+
+        .blue
+        {
+            background: -webkit-radial-gradient(30% 40%, closest-corner, #1a82f7, #2F2727);
+        }
+
+        .green
+        {
+            background: -webkit-radial-gradient(50% 50%, closest-corner, #26F426, #2F2727);
+        }
+
+        .yellow
+        {
+            background: -webkit-radial-gradient(50% 50%, closest-corner, #F4F426, #2F2727);
+        }
+
+        .pink
+        {
+            background: -webkit-radial-gradient(50% 50%, closest-corner, #F426F4, #2F2727);
+        }
+
+        div.ball:hover
+        {
+            -moz-box-shadow: 1px 1px 3px #555 ;
+            -webkit-box-shadow: 1px 1px 3px #555 ;
+            box-shadow: 1px 1px 3px #555 ;
+            background: -webkit-radial-gradient(50% 50%, closest-corner, #1a82f7, #2F2727);
+        }
+
+        .selected
+        {
+            /**/
+        }
+
+        @keyframes myfirst
+        {
+            from
+            {
+                background: red ;
+            }
+
+            to
+            {
+                background: yellow ;
+            }
+        }
+
+        @-moz-keyframes myfirst /* Firefox */
+        {
+            from
+            {
+                background: red ;
+            }
+
+            to
+            {
+                background: yellow ;
+            }
+        }
+
+        @-webkit-keyframes myfirst /* Safari and Chrome */
+        {
+            from
+            {
+                background: red ;
+            }
+
+            to
+            {
+                background: yellow ;
+            }
+        }
+    </style >
+</head>
+<body>
+    <div id ="basediv"></div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+function LineCheck(row, col){
+	this.row=row;
+	this.col=col;
+	this.result=[];
+}
+	LineCheck.prototype={
+		checkLeftMost: function () {
+			var oriCol=this.col;
+			while(oriCol>=0)
+			{
+				if (oriCol - 1 >= 0) {
+					if (array[this.row][oriCol - 1] == 0) {
+						return oriCol;
+					}
+					oriCol--;
+				}
+				else
+					return 0;
+			}
+			return 0;
+		},
+		checkTopMost: function () {
+			var oriRow = this.row;
+			while (oriRow >= 0) {
+				if (oriRow - 1 >= 0) {
+					if (array[oriRow- 1][this.col ] == 0) {
+						return oriRow;
+					}
+					oriRow--;
+				}
+				else
+					return 0;
+			}
+			return 0;
+		},
+		checkRightMost: function () {
+			var oriCol = this.col;
+			while (oriCol <= 7) {
+				if (oriCol + 1 <= 7) {
+					if (array[this.row][oriCol + 1] == 0) {
+						return oriCol;
+					}
+					oriCol++;
+				}
+				else
+					return 7;
+			}
+			return 7;
+		},
+		 checkBottomMost: function () {
+			var oriRow = this.row;
+			while (oriRow <= 7) {
+				if (oriRow + 1 <= 7) {
+					if (array[oriRow + 1][this.col] == 0) {
+						return oriRow;
+					}
+					oriRow++;
+				}
+				else
+					return 7;
+			}
+			return 7;
+		},
+		checkL2BMost: function () {
+			var oriRow = this.row;
+			var oriCol=this.col;
+			while (oriRow <= 7 && oriCol<=7) {
+				if (oriRow + 1 <= 7 && oriCol+1 <=7) {
+					if (array[oriRow + 1][oriCol+1] == 0) {
+						return oriRow;
+					}
+					oriRow++;
+					oriCol++;
+				}
+				else{
+					return oriRow;
+				}
+			}
+			return oriRow;
+		},
+		checkL2TMost: function () {
+			var oriRow = this.row;
+			var oriCol=this.col;
+			while (oriRow >= 0 && oriCol>=0) {
+				if (oriRow - 1 >= 0 && oriCol-1 >=0) {
+					if (array[oriRow -1][oriCol-1] == 0) {
+						return oriRow;
+					}
+					oriRow--;
+					oriCol--;
+				}
+				else{
+					return oriRow;
+				}
+			}
+			return oriRow;
+		},
+		checkR2BMost: function () {
+			var oriRow = this.row;
+			var oriCol=this.col;
+			while (oriRow <= 7 && oriCol>=0) {
+				if (oriRow + 1 <= 7 && oriCol-1 >=0) {
+					if (array[oriRow +1][oriCol-1] == 0) {
+						return oriRow;
+					}
+					oriRow++;
+					oriCol--;
+				}
+				else{
+					return oriRow;
+				}
+			}
+			return oriRow.toString() + oriCol.toString();
+		},
+		checkR2TMost: function () {
+			var oriRow = this.row;
+			var oriCol=this.col;
+			while (oriCol <= 7 && oriRow>=0) {
+				if (oriCol + 1 <= 7 && oriRow-1 >=0) {
+					if (array[oriRow -1][oriCol+1] == 0) {
+						return oriRow;
+					}
+					oriRow--;
+					oriCol++;
+				}
+				else{
+					return oriRow;
+				}
+			}
+			return oriRow;
+		},
+	HorizontalCheck : function(){
+		var lm=this.checkLeftMost();
+		var rm=this.checkRightMost();
+		if(rm-lm+1>=5)
+		{
+			for(var i=lm;i<=rm;i++)
+				this.result.push(this.row.toString() + i.toString());
+		}
+	},
+	VerticalCheck : function(){
+		var tm=this.checkTopMost();
+		var bm=this.checkBottomMost();
+		if(bm-tm+1>=5)
+		{
+			for(var i=tm;i<=bm; i++)
+				this.result.push(i.toString() + this.col.toString());
+		}
+	},
+	LT2RBCheck:function(){
+		var rm=this.checkL2BMost();
+		var lm=this.checkL2TMost();
+		if(rm-lm+1>=5){
+			var delta=this.row-lm;
+			for(var i=lm;i<=rm; i++)
+			{
+				this.result.push(i.toString()+(this.col-delta).toString());
+				delta--;
+				}
+		}				
+	},
+	LB2RTCheck:function(){
+		var lm=this.checkR2BMost();
+		var rm=this.checkR2TMost();
+		if(lm-rm+1>=5){
+			var delta=lm-this.row;
+			for(var i=rm;i<=lm; i++){
+				this.result.push(i.toString()+(this.col+delta-1).toString());
+				delta--;
+			}
+		}												
+	},									
+		GetResult : function(){
+		this.HorizontalCheck();
+		this.VerticalCheck();
+		this.LT2RBCheck();
+		this.LB2RTCheck();
+		return this.result;
+	} 
+	}
